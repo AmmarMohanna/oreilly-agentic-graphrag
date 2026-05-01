@@ -107,12 +107,6 @@ auto-download links will work after this repository is pushed to GitHub on the
 | `incident_knowledge_graph.graphml.xml` | [GitHub](https://github.com/AmmarMohanna/oreilly-agentic-graphrag/blob/main/5.Hardening_Production/incident_knowledge_graph.graphml.xml) | Prebuilt incident graph used by the production hardening lab. |
 | `episodic_memory.graphml.xml` | [GitHub](https://github.com/AmmarMohanna/oreilly-agentic-graphrag/blob/main/5.Hardening_Production/episodic_memory.graphml.xml) | Memory graph with 11 nodes and 10 edges representing prior investigation episodes. |
 
-### Workshop deck
-
-| File | Link | Purpose |
-| --- | --- | --- |
-| `Agentic GraphRAG Live Course.pdf` | [GitHub](https://github.com/AmmarMohanna/oreilly-agentic-graphrag/blob/main/Agentic%20GraphRAG%20Live%20Course.pdf) | Slide deck for the live course narrative, diagrams, and presenter framing. |
-
 ## What Learners Should Understand by the End
 
 By the end of the workshop, participants should be able to explain and build:
