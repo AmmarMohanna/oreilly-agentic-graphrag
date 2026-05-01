@@ -1,0 +1,305 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d6" for="edge" attr.name="rel" attr.type="string"/>
+<key id="d5" for="node" attr.name="summary" attr.type="string"/>
+<key id="d4" for="node" attr.name="valid_to" attr.type="string"/>
+<key id="d3" for="node" attr.name="valid_from" attr.type="string"/>
+<key id="d2" for="node" attr.name="team" attr.type="string"/>
+<key id="d1" for="node" attr.name="description" attr.type="string"/>
+<key id="d0" for="node" attr.name="type" attr.type="string"/>
+<graph edgedefault="directed"><node id="Auth Service">
+  <data key="d0">service</data>
+  <data key="d1">Handles authentication and issues JWT tokens</data>
+</node>
+<node id="API Gateway">
+  <data key="d0">service</data>
+  <data key="d1">Entry point for all requests, routing and rate limiting</data>
+</node>
+<node id="Database Service">
+  <data key="d0">service</data>
+  <data key="d1">Stores credentials, session state, and audit logs</data>
+</node>
+<node id="Cache Service">
+  <data key="d0">service</data>
+  <data key="d1">Stores active sessions to reduce database load</data>
+</node>
+<node id="Identity Team">
+  <data key="d0">team</data>
+</node>
+<node id="Platform Team">
+  <data key="d0">team</data>
+</node>
+<node id="Data Engineering Team">
+  <data key="d0">team</data>
+</node>
+<node id="Infrastructure Team">
+  <data key="d0">team</data>
+</node>
+<node id="Alice">
+  <data key="d0">member</data>
+  <data key="d2">Identity Team</data>
+</node>
+<node id="Omar">
+  <data key="d0">member</data>
+  <data key="d2">Identity Team</data>
+</node>
+<node id="Lina">
+  <data key="d0">member</data>
+  <data key="d2">Identity Team</data>
+</node>
+<node id="David">
+  <data key="d0">member</data>
+  <data key="d2">Platform Team</data>
+</node>
+<node id="Sara">
+  <data key="d0">member</data>
+  <data key="d2">Platform Team</data>
+</node>
+<node id="John">
+  <data key="d0">member</data>
+  <data key="d2">Data Engineering Team</data>
+</node>
+<node id="Fatima">
+  <data key="d0">member</data>
+  <data key="d2">Data Engineering Team</data>
+</node>
+<node id="Michael">
+  <data key="d0">member</data>
+  <data key="d2">Infrastructure Team</data>
+</node>
+<node id="Noor">
+  <data key="d0">member</data>
+  <data key="d2">Infrastructure Team</data>
+</node>
+<node id="Auth Service v2.1">
+  <data key="d0">deployment</data>
+  <data key="d3">2026-04-10T14:00</data>
+  <data key="d4">2026-04-11T10:12</data>
+</node>
+<node id="Auth Error Handling">
+  <data key="d0">deployment</data>
+  <data key="d3">2026-04-10T14:05</data>
+  <data key="d4"></data>
+</node>
+<node id="DB Connection Pooling">
+  <data key="d0">deployment</data>
+  <data key="d3">2026-04-10T15:30</data>
+  <data key="d4"></data>
+</node>
+<node id="DB Indexing Optimization">
+  <data key="d0">deployment</data>
+  <data key="d3">2026-04-10T15:45</data>
+  <data key="d4"></data>
+</node>
+<node id="Cache Service v1.4">
+  <data key="d0">deployment</data>
+  <data key="d3">2026-04-10T16:00</data>
+  <data key="d4"></data>
+</node>
+<node id="Cache TTL Tuning">
+  <data key="d0">deployment</data>
+  <data key="d3">2026-04-10T16:10</data>
+  <data key="d4"></data>
+</node>
+<node id="API Gateway v3.2.1">
+  <data key="d0">deployment</data>
+  <data key="d3">2026-04-11T08:30</data>
+  <data key="d4">2026-04-11T10:12</data>
+</node>
+<node id="Adaptive Rate Limiting">
+  <data key="d0">deployment</data>
+  <data key="d3">2026-04-11T08:45</data>
+  <data key="d4"></data>
+</node>
+<node id="INC-001">
+  <data key="d0">incident</data>
+  <data key="d5">Login latency spike due to database overload</data>
+  <data key="d3">2026-03-15T09:20</data>
+  <data key="d4">2026-03-15T10:05</data>
+</node>
+<node id="INC-002">
+  <data key="d0">incident</data>
+  <data key="d5">API Gateway dropping requests under high traffic</data>
+  <data key="d3">2026-03-28T11:00</data>
+  <data key="d4">2026-03-28T11:45</data>
+</node>
+<node id="INC-003">
+  <data key="d0">incident</data>
+  <data key="d5">System-wide login failures after concurrent deployments</data>
+  <data key="d3">2026-04-11T09:50</data>
+  <data key="d4">2026-04-11T10:12</data>
+</node>
+<edge source="Auth Service" target="Database Service">
+  <data key="d6">DEPENDS_ON</data>
+</edge>
+<edge source="Auth Service" target="Cache Service">
+  <data key="d6">DEPENDS_ON</data>
+</edge>
+<edge source="API Gateway" target="Auth Service">
+  <data key="d6">DEPENDS_ON</data>
+</edge>
+<edge source="Cache Service" target="Database Service">
+  <data key="d6">DEPENDS_ON</data>
+</edge>
+<edge source="Identity Team" target="Auth Service">
+  <data key="d6">OWNS</data>
+</edge>
+<edge source="Platform Team" target="API Gateway">
+  <data key="d6">OWNS</data>
+</edge>
+<edge source="Data Engineering Team" target="Database Service">
+  <data key="d6">OWNS</data>
+</edge>
+<edge source="Infrastructure Team" target="Cache Service">
+  <data key="d6">OWNS</data>
+</edge>
+<edge source="Alice" target="Identity Team">
+  <data key="d6">MEMBER_OF</data>
+</edge>
+<edge source="Omar" target="Identity Team">
+  <data key="d6">MEMBER_OF</data>
+</edge>
+<edge source="Lina" target="Identity Team">
+  <data key="d6">MEMBER_OF</data>
+</edge>
+<edge source="David" target="Platform Team">
+  <data key="d6">MEMBER_OF</data>
+</edge>
+<edge source="Sara" target="Platform Team">
+  <data key="d6">MEMBER_OF</data>
+</edge>
+<edge source="John" target="Data Engineering Team">
+  <data key="d6">MEMBER_OF</data>
+</edge>
+<edge source="Fatima" target="Data Engineering Team">
+  <data key="d6">MEMBER_OF</data>
+</edge>
+<edge source="Michael" target="Infrastructure Team">
+  <data key="d6">MEMBER_OF</data>
+</edge>
+<edge source="Noor" target="Infrastructure Team">
+  <data key="d6">MEMBER_OF</data>
+</edge>
+<edge source="Auth Service v2.1" target="Auth Service">
+  <data key="d6">DEPLOYED_TO</data>
+</edge>
+<edge source="Auth Service v2.1" target="Identity Team">
+  <data key="d6">DEPLOYED_BY</data>
+</edge>
+<edge source="Auth Service v2.1" target="Alice">
+  <data key="d6">AUTHORED_BY</data>
+</edge>
+<edge source="Auth Service v2.1" target="INC-003">
+  <data key="d6">TRIGGERED</data>
+</edge>
+<edge source="Auth Error Handling" target="Auth Service">
+  <data key="d6">DEPLOYED_TO</data>
+</edge>
+<edge source="Auth Error Handling" target="Identity Team">
+  <data key="d6">DEPLOYED_BY</data>
+</edge>
+<edge source="Auth Error Handling" target="Lina">
+  <data key="d6">AUTHORED_BY</data>
+</edge>
+<edge source="DB Connection Pooling" target="Database Service">
+  <data key="d6">DEPLOYED_TO</data>
+</edge>
+<edge source="DB Connection Pooling" target="Data Engineering Team">
+  <data key="d6">DEPLOYED_BY</data>
+</edge>
+<edge source="DB Connection Pooling" target="John">
+  <data key="d6">AUTHORED_BY</data>
+</edge>
+<edge source="DB Indexing Optimization" target="Database Service">
+  <data key="d6">DEPLOYED_TO</data>
+</edge>
+<edge source="DB Indexing Optimization" target="Data Engineering Team">
+  <data key="d6">DEPLOYED_BY</data>
+</edge>
+<edge source="DB Indexing Optimization" target="Fatima">
+  <data key="d6">AUTHORED_BY</data>
+</edge>
+<edge source="Cache Service v1.4" target="Cache Service">
+  <data key="d6">DEPLOYED_TO</data>
+</edge>
+<edge source="Cache Service v1.4" target="Infrastructure Team">
+  <data key="d6">DEPLOYED_BY</data>
+</edge>
+<edge source="Cache Service v1.4" target="Michael">
+  <data key="d6">AUTHORED_BY</data>
+</edge>
+<edge source="Cache TTL Tuning" target="Cache Service">
+  <data key="d6">DEPLOYED_TO</data>
+</edge>
+<edge source="Cache TTL Tuning" target="Infrastructure Team">
+  <data key="d6">DEPLOYED_BY</data>
+</edge>
+<edge source="Cache TTL Tuning" target="Noor">
+  <data key="d6">AUTHORED_BY</data>
+</edge>
+<edge source="API Gateway v3.2.1" target="API Gateway">
+  <data key="d6">DEPLOYED_TO</data>
+</edge>
+<edge source="API Gateway v3.2.1" target="Platform Team">
+  <data key="d6">DEPLOYED_BY</data>
+</edge>
+<edge source="API Gateway v3.2.1" target="David">
+  <data key="d6">AUTHORED_BY</data>
+</edge>
+<edge source="API Gateway v3.2.1" target="INC-003">
+  <data key="d6">TRIGGERED</data>
+</edge>
+<edge source="Adaptive Rate Limiting" target="API Gateway">
+  <data key="d6">DEPLOYED_TO</data>
+</edge>
+<edge source="Adaptive Rate Limiting" target="Platform Team">
+  <data key="d6">DEPLOYED_BY</data>
+</edge>
+<edge source="Adaptive Rate Limiting" target="Sara">
+  <data key="d6">AUTHORED_BY</data>
+</edge>
+<edge source="INC-001" target="Database Service">
+  <data key="d6">AFFECTS</data>
+</edge>
+<edge source="INC-001" target="Auth Service">
+  <data key="d6">AFFECTS</data>
+</edge>
+<edge source="INC-001" target="Fatima">
+  <data key="d6">RESOLVED_BY</data>
+</edge>
+<edge source="INC-001" target="Omar">
+  <data key="d6">RESOLVED_BY</data>
+</edge>
+<edge source="INC-002" target="API Gateway">
+  <data key="d6">AFFECTS</data>
+</edge>
+<edge source="INC-002" target="Auth Service">
+  <data key="d6">AFFECTS</data>
+</edge>
+<edge source="INC-002" target="Database Service">
+  <data key="d6">AFFECTS</data>
+</edge>
+<edge source="INC-002" target="Sara">
+  <data key="d6">RESOLVED_BY</data>
+</edge>
+<edge source="INC-002" target="Noor">
+  <data key="d6">RESOLVED_BY</data>
+</edge>
+<edge source="INC-003" target="Auth Service">
+  <data key="d6">AFFECTS</data>
+</edge>
+<edge source="INC-003" target="API Gateway">
+  <data key="d6">AFFECTS</data>
+</edge>
+<edge source="INC-003" target="Cache Service">
+  <data key="d6">AFFECTS</data>
+</edge>
+<edge source="INC-003" target="Database Service">
+  <data key="d6">AFFECTS</data>
+</edge>
+<edge source="INC-003" target="Omar">
+  <data key="d6">RESOLVED_BY</data>
+</edge>
+<edge source="INC-003" target="Sara">
+  <data key="d6">RESOLVED_BY</data>
+</edge>
+</graph></graphml>

@@ -1,0 +1,40 @@
+[
+  {
+    "id": "Q1",
+    "category": "local",
+    "query": "Who are the members of the Identity Team?",
+    "keywords": [
+      "alice",
+      "omar",
+      "lina"
+    ]
+  },
+  {
+    "id": "Q2",
+    "category": "temporal",
+    "query": "Which incidents affected the API Gateway?",
+    "keywords": [
+      "inc-002",
+      "inc-003"
+    ]
+  },
+  {
+    "id": "Q3",
+    "category": "multi-hop",
+    "query": "Who authored the deployment that triggered INC-003?",
+    "keywords": [
+      "david",
+      "alice"
+    ]
+  },
+  {
+    "id": "Q4",
+    "category": "memory",
+    "query": "Based on previous investigations, how was the INC-003 incident resolved?",
+    "keywords": [
+      "rolling back",
+      "omar",
+      "token validation"
+    ]
+  }
+]

@@ -1,0 +1,46 @@
+{
+  "run_at": "2026-04-28T19:51:38",
+  "label": "Part A",
+  "results": [
+    {
+      "id": "Q1",
+      "category": "local",
+      "vector_rag_kw": 0.0,
+      "vector_rag_answer": "I don't have enough information in the knowledge graph to answer this. While the Identity Team is listed as a team, the provided context only identifies Michael as a member without specifying which team he belongs to.",
+      "graph_rag_kw": 1.0,
+      "graph_rag_answer": "The members of the Identity Team are Alice, Omar, and Lina.\n\nThis is determined by the following edge chains:\n*   Alice --[MEMBER_OF]--> Identity Team\n*   Omar --[MEMBER_OF]--> Identity Team\n*   Lina --[MEMBER_OF]--> Identity Team",
+      "agent_kw": 1.0,
+      "agent_answer": "Based on the knowledge graph, the members of the **Identity Team** are:\n\n*   **Alice** --[MEMBER_OF]--> Identity Team [team]\n*   **Omar** --[MEMBER_OF]--> Identity Team [team]\n*   **Lina** --[MEMBER_OF]--> Identity Team [team]"
+    },
+    {
+      "id": "Q2",
+      "category": "temporal",
+      "vector_rag_kw": 0.5,
+      "vector_rag_answer": "The incident that affected the API Gateway is INC-002, which involved the API Gateway dropping requests under high traffic.",
+      "graph_rag_kw": 1.0,
+      "graph_rag_answer": "Based on the knowledge graph, the following incidents affected the API Gateway:\n\n*   **INC-002**: The relationship `INC-002 --[AFFECTS]--> API Gateway` confirms this incident impacted the service.\n*   **INC-003**: The relationship `INC-003 --[AFFECTS]--> API Gateway` confirms this incident impacted the service.",
+      "agent_kw": 1.0,
+      "agent_answer": "Based on the knowledge graph, the following incidents affected the **API Gateway** [service]:\n\n*   **INC-002** --[AFFECTS]--> API Gateway [service]\n*   **INC-003** --[AFFECTS]--> API Gateway [service]"
+    },
+    {
+      "id": "Q3",
+      "category": "multi-hop",
+      "vector_rag_kw": 0.0,
+      "vector_rag_answer": "I don't have enough information in the knowledge graph to answer this.",
+      "graph_rag_kw": 1.0,
+      "graph_rag_answer": "Based on the knowledge graph, there are two deployments identified as triggering INC-003:\n\n1.  **API Gateway v3.2.1**: This deployment triggered INC-003 (`API Gateway v3.2.1 --[TRIGGERED]--> INC-003`). It was authored by **David** (`API Gateway v3.2.1 --[AUTHORED_BY]--> David`).\n2.  **Auth Service v2.1**: This deployment also triggered INC-003 (`Auth Service v2.1 --[TRIGGERED]--> INC-003`). It was authored by **Alice** (`Auth Service v2.1 --[AUTHORED_BY]--> Alice`).",
+      "agent_kw": 1.0,
+      "agent_answer": "Based on the provided context, INC-003 was triggered by two deployments:\n\n*   **API Gateway v3.2.1**, authored by David (Platform Team).\n*   **Auth Service v2.1**, authored by Alice (Identity Team)."
+    },
+    {
+      "id": "Q4",
+      "category": "memory",
+      "vector_rag_kw": 0.0,
+      "vector_rag_answer": "I don't have enough information in the knowledge graph to answer this.",
+      "graph_rag_kw": 0.33,
+      "graph_rag_answer": "Based on the provided knowledge graph, INC-003 was resolved by the following members:\n\n*   **Omar** (via the relationship `INC-003 --[RESOLVED_BY]--> Omar`)\n*   **Sara** (via the relationship `INC-003 --[RESOLVED_BY]--> Sara`)\n\nThe context does not provide specific technical steps or remediation actions taken by these individuals to resolve the incident, only their identification as the resolvers.",
+      "agent_kw": 0.67,
+      "agent_answer": "Based on the knowledge graph, INC-003 was resolved by **Omar** and **Sara**, who are both members of the **Platform Team**. \n\nThe resolution involved rolling back **API Gateway v3.2.1** to the previous stable version, as this specific version was identified as having **[TRIGGERED]** the incident."
+    }
+  ]
+}
