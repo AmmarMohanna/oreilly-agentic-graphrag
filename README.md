@@ -17,6 +17,10 @@ flowchart LR
     D --> E["5. Hardening<br/>Evaluation + regression checks"]
 ```
 
+## Workshop Deck
+
+[View the workshop deck](https://drive.google.com/file/d/1N4sNRVaMyUlq1NCVZYoMkn3W9J9gzDEf/view?usp=sharing).
+
 ## Open the Labs in Colab
 
 Run the notebooks in order. Each lab builds the concepts used by the next one.
@@ -135,14 +139,3 @@ By the end of the workshop, participants should be able to explain and build:
 4. Run Lab 3 to compare local and global graph retrieval.
 5. Run Lab 4 to turn retrieval into agent tools with memory.
 6. Run Lab 5 to evaluate behavior and discuss production hardening.
-
-## Notes for Instructors
-
-- The notebooks are designed for a live workshop. Keep the path linear unless
-  learners already know vector search and knowledge graphs.
-- The graph files are included so later labs can run even if a learner falls
-  behind during graph construction.
-- The challenge set in Lab 5 is intentionally small. It is meant to teach the
-  evaluation pattern, not to be a complete benchmark.
-- If you fork this repository, update the Colab links to point to your fork:
-  `https://colab.research.google.com/github/<owner>/<repo>/blob/main/<path>.ipynb`.
