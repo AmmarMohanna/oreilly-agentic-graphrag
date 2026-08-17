@@ -35,16 +35,16 @@ Run the notebooks in order. Each lab builds the concepts used by the next one.
 
 ## Credentials Needed
 
-Some labs call Gemini and use Hugging Face models. In Colab, add these secrets
-before running the notebooks:
+Some labs call Gemini and use public Hugging Face models. In Colab, add these
+secrets before running the notebooks:
 
 | Secret | Used for |
 | --- | --- |
-| `GOOGLE_API_KEY` | Gemini generation through the Google Generative AI API. |
-| `HF_TOKEN` | Hugging Face model access for embedding and local model setup. |
+| `GOOGLE_API_KEY` | **Required.** Gemini 3.6 Flash generation through the Google Generative AI API. |
+| `HF_TOKEN` | Optional but recommended. Avoids anonymous Hugging Face download rate limits. |
 
-In Colab, open the left sidebar, choose **Secrets**, add both names, and enable
-notebook access.
+In Colab, open the left sidebar, choose **Secrets**, add `GOOGLE_API_KEY`, and
+enable notebook access. Add `HF_TOKEN` the same way if you have one.
 
 ## Data Availability
 
@@ -53,9 +53,8 @@ is opened directly in Colab, the notebook checks for its required companion
 files and downloads them from this GitHub repo if they are missing. Learners do
 not need to upload JSON, GraphML, ZIP, or Python helper files manually.
 
-The only manual setup required is adding the API secrets above. The Colab and
-auto-download links will work after this repository is pushed to GitHub on the
-`main` branch.
+The only manual setup required is adding `GOOGLE_API_KEY` (plus the optional
+`HF_TOKEN`) as described above.
 
 ## Repo Map
 
@@ -90,7 +89,7 @@ auto-download links will work after this repository is pushed to GitHub on the
 | File | Link | Purpose |
 | --- | --- | --- |
 | `03_graphrag.ipynb` | [Colab](https://colab.research.google.com/github/AmmarMohanna/oreilly-agentic-graphrag/blob/main/3.Graphrag/03_graphrag.ipynb) | Implements local GraphRAG for neighborhood questions and global GraphRAG for community-level summaries. |
-| `incident_knowledge_graph.graphml.xml` | [GitHub](https://github.com/AmmarMohanna/oreilly-agentic-graphrag/blob/main/3.Graphrag/incident_knowledge_graph.graphml.xml) | Prebuilt incident graph with 28 nodes and 58 edges, used so learners can run Lab 3 without regenerating the graph. |
+| `incident_knowledge_graph.graphml.xml` | [GitHub](https://github.com/AmmarMohanna/oreilly-agentic-graphrag/blob/main/3.Graphrag/incident_knowledge_graph.graphml.xml) | Prebuilt incident multigraph with 28 nodes and 61 edges, used so learners can run Lab 3 without regenerating the graph. |
 | `community_summaries.json` | [GitHub](https://github.com/AmmarMohanna/oreilly-agentic-graphrag/blob/main/3.Graphrag/community_summaries.json) | Saved summaries for detected graph communities, used by the global retrieval section. |
 
 ### `4.Agentic_graphrag/`
@@ -98,7 +97,7 @@ auto-download links will work after this repository is pushed to GitHub on the
 | File | Link | Purpose |
 | --- | --- | --- |
 | `04_agentic_graphrag.ipynb` | [Colab](https://colab.research.google.com/github/AmmarMohanna/oreilly-agentic-graphrag/blob/main/4.Agentic_graphrag/04_agentic_graphrag.ipynb) | Turns retrieval functions into tools, adds an agentic control loop, and introduces episodic memory for previous investigations. |
-| `incident_knowledge_graph.graphml.xml` | [GitHub](https://github.com/AmmarMohanna/oreilly-agentic-graphrag/blob/main/4.Agentic_graphrag/incident_knowledge_graph.graphml.xml) | Same 28-node, 58-edge graph packaged with Lab 4 for the agent tools. |
+| `incident_knowledge_graph.graphml.xml` | [GitHub](https://github.com/AmmarMohanna/oreilly-agentic-graphrag/blob/main/4.Agentic_graphrag/incident_knowledge_graph.graphml.xml) | Same 28-node, 61-edge multigraph packaged with Lab 4 for the agent tools. |
 
 ### `5.Hardening_Production/`
 
@@ -107,9 +106,9 @@ auto-download links will work after this repository is pushed to GitHub on the
 | `05_evaluation_harness.ipynb` | [Colab](https://colab.research.google.com/github/AmmarMohanna/oreilly-agentic-graphrag/blob/main/5.Hardening_Production/05_evaluation_harness.ipynb) | Runs a small evaluation harness across the three RAG systems and demonstrates live graph updates with regression checks. |
 | `rag_systems.py` | [GitHub](https://github.com/AmmarMohanna/oreilly-agentic-graphrag/blob/main/5.Hardening_Production/rag_systems.py) | Helper module loaded by Lab 5. It prepares `vector_rag(query)`, `graph_rag(query)`, and `run(query)` for side-by-side evaluation. |
 | `challenge_set.json` | [GitHub](https://github.com/AmmarMohanna/oreilly-agentic-graphrag/blob/main/5.Hardening_Production/challenge_set.json) | Golden question set covering local, temporal, multi-hop, and memory-based questions. |
-| `eval_results.json` | [GitHub](https://github.com/AmmarMohanna/oreilly-agentic-graphrag/blob/main/5.Hardening_Production/eval_results.json) | Saved evaluation output from a previous run, useful as an example of expected harness output. |
+| `eval_results.json` | [GitHub](https://github.com/AmmarMohanna/oreilly-agentic-graphrag/blob/main/5.Hardening_Production/eval_results.json) | Fact-checked cached workshop baseline, used by the fast evaluation path and clearly labeled separately from live runs. |
 | `incident_knowledge_graph.graphml.xml` | [GitHub](https://github.com/AmmarMohanna/oreilly-agentic-graphrag/blob/main/5.Hardening_Production/incident_knowledge_graph.graphml.xml) | Prebuilt incident graph used by the production hardening lab. |
-| `episodic_memory.graphml.xml` | [GitHub](https://github.com/AmmarMohanna/oreilly-agentic-graphrag/blob/main/5.Hardening_Production/episodic_memory.graphml.xml) | Memory graph with 11 nodes and 10 edges representing prior investigation episodes. |
+| `episodic_memory.graphml.xml` | [GitHub](https://github.com/AmmarMohanna/oreilly-agentic-graphrag/blob/main/5.Hardening_Production/episodic_memory.graphml.xml) | Curated memory graph with 4 nodes and 3 chronological edges representing prior investigation episodes. |
 
 ## What Learners Should Understand by the End
 
@@ -133,7 +132,7 @@ By the end of the workshop, participants should be able to explain and build:
 
 ## Recommended Run Order
 
-1. Open Lab 1 in Colab and add `GOOGLE_API_KEY` plus `HF_TOKEN` to Secrets.
+1. Open Lab 1 in Colab and add `GOOGLE_API_KEY` (plus optional `HF_TOKEN`) to Secrets.
 2. Run Lab 1 to see the baseline and limitations.
 3. Run Lab 2 to build the graph model.
 4. Run Lab 3 to compare local and global graph retrieval.

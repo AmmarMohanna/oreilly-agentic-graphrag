@@ -32,7 +32,7 @@
     "category": "memory",
     "query": "Based on previous investigations, how was the INC-003 incident resolved?",
     "keywords": [
-      "rolling back",
+      "roll",
       "omar",
       "token validation"
     ]

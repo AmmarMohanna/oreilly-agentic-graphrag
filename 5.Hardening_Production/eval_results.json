@@ -1,5 +1,6 @@
 {
   "run_at": "2026-04-28T19:51:38",
+  "source": "curated workshop baseline, fact-checked against repository fixtures",
   "label": "Part A",
   "results": [
     {
@@ -39,8 +40,8 @@
       "vector_rag_answer": "I don't have enough information in the knowledge graph to answer this.",
       "graph_rag_kw": 0.33,
       "graph_rag_answer": "Based on the provided knowledge graph, INC-003 was resolved by the following members:\n\n*   **Omar** (via the relationship `INC-003 --[RESOLVED_BY]--> Omar`)\n*   **Sara** (via the relationship `INC-003 --[RESOLVED_BY]--> Sara`)\n\nThe context does not provide specific technical steps or remediation actions taken by these individuals to resolve the incident, only their identification as the resolvers.",
-      "agent_kw": 0.67,
-      "agent_answer": "Based on the knowledge graph, INC-003 was resolved by **Omar** and **Sara**, who are both members of the **Platform Team**. \n\nThe resolution involved rolling back **API Gateway v3.2.1** to the previous stable version, as this specific version was identified as having **[TRIGGERED]** the incident."
+      "agent_kw": 1.0,
+      "agent_answer": "Based on the recalled investigation, INC-003 was resolved by two coordinated rollbacks. **Omar** from the **Identity Team** rolled Auth Service v2.1 back to v2.0.3, restoring stable **token validation**. **Sara** from the **Platform Team** reverted the API Gateway routing update. The system stabilized after the rollbacks and cache-flush propagation completed."
     }
   ]
 }
