@@ -11,10 +11,12 @@ from __future__ import annotations
 import subprocess, sys
 subprocess.run([
     sys.executable, "-m", "pip", "install", "-q",
-    "langchain-google-genai",
-    "langchain-core",
-    "langchain-huggingface",
-    "networkx",
+    "langchain-google-genai>=4.3.4",
+    "langchain-core>=1.5.5",
+    "langchain-huggingface>=1.2.2",
+    "sentence-transformers>=3.0",
+    "networkx>=3.3",
+    "matplotlib>=3.9",
     "nest_asyncio",
 ], check=True)
 
@@ -45,14 +47,18 @@ import os
 try:
     from google.colab import userdata
     GEMINI_API_KEY = userdata.get('GOOGLE_API_KEY')
-    HF_TOKEN       = userdata.get('HF_TOKEN')
-    print("Keys loaded from Colab Secrets.")
+    print("Google API key loaded from Colab Secrets.")
 except Exception:
     GEMINI_API_KEY = os.getenv('GOOGLE_API_KEY', '')
-    HF_TOKEN       = os.getenv('HF_TOKEN', '')
     print("Reading from environment variables.")
 
-GEMINI_MODEL = "gemini-3-flash-preview"
+if not GEMINI_API_KEY:
+    raise RuntimeError(
+        "GOOGLE_API_KEY is missing. In Colab, add it under Secrets and enable "
+        "notebook access; locally, export GOOGLE_API_KEY before running this lab."
+    )
+
+GEMINI_MODEL = "gemini-3.6-flash"
 EMBED_MODEL  = "BAAI/bge-small-en-v1.5"
 GRAPH_FILE   = "incident_knowledge_graph.graphml"
 if not pathlib.Path(GRAPH_FILE).exists() and pathlib.Path("incident_knowledge_graph.graphml.xml").exists():
@@ -60,8 +66,9 @@ if not pathlib.Path(GRAPH_FILE).exists() and pathlib.Path("incident_knowledge_gr
 
 chat_model = ChatGoogleGenerativeAI(
     model=GEMINI_MODEL,
-    temperature=0.1,
     google_api_key=GEMINI_API_KEY,
+    thinking_level="low",
+    max_retries=6,
 )
 print(f"LLM ready — {GEMINI_MODEL}")
 
@@ -186,6 +193,15 @@ def _find_seeds(query: str, k: int = 3) -> list:
             seen.add(n); seeds.append(n)
     return seeds[:k]
 
+def _edge_relations(source: str, target: str) -> list[str]:
+    """Return every relationship between two nodes for DiGraph or MultiDiGraph."""
+    edge_data = G.get_edge_data(source, target, default={})
+    if not edge_data:
+        return []
+    if G.is_multigraph():
+        return sorted({attrs.get('rel', '?') for attrs in edge_data.values()})
+    return [edge_data.get('rel', '?')]
+
 def _bfs_context(query: str) -> str:
     seed_nodes = _find_seeds(query, k=3)
     if not seed_nodes:
@@ -193,15 +209,16 @@ def _bfs_context(query: str) -> str:
     lines    = [f"Seed nodes: {', '.join(seed_nodes)}"]
     visited  = set(seed_nodes)
     frontier = list(seed_nodes)
+    seen_edges = set()
 
     # Edges between seed nodes themselves
     for u in seed_nodes:
         for v in seed_nodes:
             if u != v:
-                edge = G.get_edge_data(u, v)
-                if edge:
+                for rel in _edge_relations(u, v):
+                    seen_edges.add((u, v, rel))
                     lines.append(
-                        f"{u} --[{edge.get('rel','?')}]--> {v} "
+                        f"{u} --[{rel}]--> {v} "
                         f"[{G.nodes[v].get('type','entity')}]"
                     )
     # BFS 2 hops
@@ -210,21 +227,27 @@ def _bfs_context(query: str) -> str:
         indent = '  ' * (hop + 1)
         for node in frontier:
             for nb in G.successors(node):
+                for rel in _edge_relations(node, nb):
+                    edge_key = (node, nb, rel)
+                    if edge_key not in seen_edges:
+                        seen_edges.add(edge_key)
+                        lines.append(
+                            f"{indent}{node} --[{rel}]--> {nb} "
+                            f"[{G.nodes[nb].get('type','entity')}]"
+                        )
                 if nb not in visited:
                     visited.add(nb); nxt.append(nb)
-                    rel = (G.get_edge_data(node, nb) or {}).get('rel', '?')
-                    lines.append(
-                        f"{indent}{node} --[{rel}]--> {nb} "
-                        f"[{G.nodes[nb].get('type','entity')}]"
-                    )
             for nb in G.predecessors(node):
+                for rel in _edge_relations(nb, node):
+                    edge_key = (nb, node, rel)
+                    if edge_key not in seen_edges:
+                        seen_edges.add(edge_key)
+                        lines.append(
+                            f"{indent}{nb} --[{rel}]--> {node} "
+                            f"[{G.nodes[node].get('type','entity')}]"
+                        )
                 if nb not in visited:
                     visited.add(nb); nxt.append(nb)
-                    rel = (G.get_edge_data(nb, node) or {}).get('rel', '?')
-                    lines.append(
-                        f"{indent}{nb} --[{rel}]--> {node} "
-                        f"[{G.nodes[node].get('type','entity')}]"
-                    )
         frontier = nxt
 
     return '\n'.join(lines) if len(lines) > 1 else "No connected nodes found."
@@ -339,7 +362,7 @@ _TOOLS = {
 
 _THINK_MEM = (
     "You are an agent selecting the right skill to investigate the user's query.\n\n"
-    "Past similar incidents (avoid repeating steps already tried):\n{memory_context}\n\n"
+    "Past similar incidents (use as context, then verify with one skill):\n{memory_context}\n\n"
     "Observations this session:\n{observations}\n\n"
     "Available skills:\n{skill_list}\n\n"
     "Valid skill names: {valid_names}\n"
@@ -450,16 +473,21 @@ class EpisodicMemory:
         if not past:
             return 'No past episodes.'
         now = datetime.now()
-        q_w = {w for w in query.lower().split() if len(w) > 3}
+        q_w = {w for w in _re.findall(r"[a-z0-9-]+", query.lower()) if len(w) > 3}
 
         def score(d):
-            g_w = {w for w in d.get('goal', '').lower().split() if len(w) > 3}
-            sim = len(q_w & g_w) / max(len(q_w | g_w), 1) if q_w else 1.0
+            g_w = {
+                w for w in _re.findall(r"[a-z0-9-]+", d.get('goal', '').lower())
+                if len(w) > 3
+            }
+            overlap = q_w & g_w
+            sim = len(overlap) / max(len(q_w | g_w), 1) if q_w else 1.0
             try:
                 age = (now - datetime.fromisoformat(d.get('ts', now.isoformat()))).days
             except ValueError:
                 age = 0
-            return 0.6 * sim + 0.4 * (2 ** (-age / 7))
+            blended = 0.6 * sim + 0.4 * (2 ** (-age / 7))
+            return (bool(overlap) or not q_w, blended)
 
         ranked = sorted(past, key=lambda x: score(x[1]), reverse=True)[:k]
         lines  = []
@@ -467,7 +495,7 @@ class EpisodicMemory:
             chain = ' -> '.join(s['tool'] for s in json.loads(d.get('steps', '[]'))) or 'none'
             lines.append(
                 f"[{d.get('ts','')[:19]}] Goal: {d.get('goal','')}\n"
-                f"  Tools: {chain}\n  Result: {d.get('result','')[:150]}"
+                f"  Tools: {chain}\n  Result: {d.get('result','')[:400]}"
             )
         return '\n\n'.join(lines)
 
@@ -477,17 +505,10 @@ memory = EpisodicMemory()
 
 def _seed_memory():
     """
-    Inject realistic past episodes so memory is non-empty from the first run.
-    Skipped if the memory file already exists (i.e. real runs have been logged).
-    Each episode mimics what run() would have stored after a real investigation.
+    Upsert realistic past episodes so memory is useful from the first run.
+    Stable seed IDs refresh corrected workshop fixtures without removing logged runs.
     """
     # Always upsert seed episodes by ID so they stay current across re-runs.
-    # Only skip an episode if it's already present with the correct goal.
-    existing_goals = {
-        d.get("goal", ""): n
-        for n, d in memory._G.nodes(data=True)
-    }
-
     _SEED_EPISODES = [
         {
             "id":    "ep_seed_001",
@@ -531,10 +552,10 @@ def _seed_memory():
                 }
             ]),
             "result": (
-                "INC-003 was resolved by rolling back API Gateway v3.2.1 to the previous stable version. "
-                "Omar and Sara from the Platform Team executed the rollback and confirmed service recovery. "
-                "Root cause: the API Gateway v3.2.1 deployment introduced a misconfiguration "
-                "that destabilised token validation in Auth Service."
+                "INC-003 was resolved by two coordinated rollbacks: Omar from the Identity Team "
+                "rolled Auth Service v2.1 back to v2.0.3, restoring stable token validation, and "
+                "Sara from the Platform Team reverted the API Gateway routing update. The system "
+                "stabilized after the rollbacks and cache-flush propagation completed."
             ),
         },
         {
@@ -574,16 +595,13 @@ def _seed_memory():
                         "Seed nodes: INC-003\n"
                         "INC-003 --[AFFECTS]--> Auth Service [service]\n"
                         "INC-003 --[AFFECTS]--> API Gateway [service]\n"
-                        "Auth Service --[DEPENDS_ON]--> Cache Service [service]\n"
-                        "API Gateway --[DEPENDS_ON]--> Auth Service [service]"
+                        "INC-003 --[AFFECTS]--> Cache Service [service]\n"
+                        "INC-003 --[AFFECTS]--> Database Service [service]"
                     ),
                 }
             ]),
             "result": (
-                "INC-003 affected both API Gateway and Auth Service directly. "
-                "Because API Gateway depends on Auth Service, and Auth Service depends on Cache Service, "
-                "the downstream blast radius included the Cache Service as well. "
-                "The root cause was the Auth Service v2.1 deployment which destabilised token validation."
+                "INC-003 directly affected Auth Service, API Gateway, Cache Service, and Database Service."
             ),
         },
     ]
