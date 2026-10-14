@@ -12,7 +12,7 @@ import subprocess, sys
 subprocess.run([
     sys.executable, "-m", "pip", "install", "-q",
     "langchain-google-genai==4.3.4",
-    "langchain-core==1.5.5",
+    "langchain-core==1.6.3",
     "langchain-huggingface>=1.2.2",
     "google-genai==2.12.1",
     "google-auth==2.49.0",
@@ -46,19 +46,33 @@ print("Libraries ready.")
 # ── Credentials & models ──────────────────────────────────────────────────────
 
 import os
-try:
-    from google.colab import userdata
-    GEMINI_API_KEY = userdata.get('GOOGLE_API_KEY')
-    print("Google API key loaded from Colab Secrets.")
-except Exception:
-    GEMINI_API_KEY = os.getenv('GOOGLE_API_KEY', '')
-    print("Reading from environment variables.")
 
+
+def load_secret(name):
+    """Read an environment variable or one Colab secret without printing its value."""
+    value = os.getenv(name, "")
+    if value:
+        return value
+    try:
+        from google.colab import userdata
+        return userdata.get(name) or ""
+    except Exception:
+        return ""
+
+
+GEMINI_API_KEY = load_secret("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY", "")
+HF_TOKEN = load_secret("HF_TOKEN")
 if not GEMINI_API_KEY:
     raise RuntimeError(
-        "GOOGLE_API_KEY is missing. In Colab, add it under Secrets and enable "
-        "notebook access; locally, export GOOGLE_API_KEY before running this lab."
+        "Add GOOGLE_API_KEY to Colab Secrets and enable notebook access, "
+        "or set GOOGLE_API_KEY in the environment before continuing."
     )
+
+# The helper and Hugging Face clients reuse these values without another vault request.
+os.environ["GOOGLE_API_KEY"] = GEMINI_API_KEY
+if HF_TOKEN:
+    os.environ["HF_TOKEN"] = HF_TOKEN
+print("Gemini credentials ready; " + ("HF_TOKEN configured." if HF_TOKEN else "using public Hugging Face models."))
 
 GEMINI_MODEL = "gemini-3.6-flash"
 EMBED_MODEL  = "BAAI/bge-small-en-v1.5"
@@ -74,7 +88,9 @@ chat_model = ChatGoogleGenerativeAI(
 )
 print(f"LLM ready — {GEMINI_MODEL}")
 
-embeddings = HuggingFaceEmbeddings(model_name=EMBED_MODEL)
+embeddings = HuggingFaceEmbeddings(
+    model_name=EMBED_MODEL, model_kwargs={"token": HF_TOKEN or False}
+)
 print(f"Embeddings ready — {EMBED_MODEL} (local)")
 
 # ── Knowledge graph ───────────────────────────────────────────────────────────
