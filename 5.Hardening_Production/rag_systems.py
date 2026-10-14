@@ -12,7 +12,7 @@ import subprocess, sys
 subprocess.run([
     sys.executable, "-m", "pip", "install", "-q",
     "langchain-google-genai==4.3.4",
-    "langchain-core==1.5.5",
+    "langchain-core==1.6.3",
     "langchain-huggingface>=1.2.2",
     "google-genai==2.12.1",
     "google-auth==2.49.0",
